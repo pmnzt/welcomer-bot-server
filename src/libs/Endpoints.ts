@@ -1,0 +1,1 @@
+export const createMessage = (channel_id: string) => `/channels/${channel_id}/messages`
