@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'
 import Eris, { Client } from 'eris'
-import Api from './../libs/disocrdApi'
+import Api from './../libs/discordApi/disocrdApi'
  
 
 const getBotGuilds = (bot: Client) => {
