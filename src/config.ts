@@ -1,7 +1,7 @@
 import * as dotenv from "dotenv"
 dotenv.config()
 
-const port = 3000
+const port = 4000
 
 export {
     port

@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import Eris, { Client } from 'eris'
 import Api from './../libs/discordApi/disocrdApi'
- 
+import { Server } from "socket.io"
 
 const readyBot = (bot: Client) => {
     console.log(`Ready! ${bot.guilds.size}`);
@@ -28,7 +28,11 @@ const login = async (req: Request, res: Response) => {
 
     const bot: Client = newBot(token)
     initBotEvents(bot)
-    await bot.connect()
+    await bot.connect();
+
+    (req as any).io.emit('hi', {
+        content: 'hello'
+    })
     
     res.send('logged in')
 }
