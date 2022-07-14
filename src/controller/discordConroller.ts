@@ -3,13 +3,14 @@ import Eris, { Client } from 'eris'
 import Api from './../libs/discordApi/disocrdApi'
  
 
-const getBotGuilds = (bot: Client) => {
-    return bot.guilds
+const readyBot = (bot: Client) => {
+    console.log(`Ready! ${bot.guilds.size}`);
+    // console.log(JSON.stringify(bot.guilds))
 }
 
 const initBotEvents = (bot: Client) => {
     bot.on('ready', () => {
-        console.log("Ready!");
+        readyBot(bot)
     })
 
     bot.on('messageCreate', async (msg) => {
@@ -28,10 +29,8 @@ const login = async (req: Request, res: Response) => {
     const bot: Client = newBot(token)
     initBotEvents(bot)
     await bot.connect()
-    const guilds = getBotGuilds(bot) 
     
-    console.log(guilds.size)
-    res.send(getBotGuilds(bot))
+    res.send('logged in')
 }
 
 const sendMessage = async (req: Request, res: Response) => {
