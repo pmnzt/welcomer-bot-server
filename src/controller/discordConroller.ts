@@ -1,20 +1,28 @@
 import { Request, Response } from 'express'
 import Eris, { Client } from 'eris'
 import Api from './../libs/discordApi/disocrdApi'
-import { Server } from "socket.io"
+import { Server, Socket } from "socket.io"
 
 const readyBot = (bot: Client) => {
     console.log(`Ready! ${bot.guilds.size}`);
-    // console.log(JSON.stringify(bot.guilds))
+    
 }
 
-const initBotEvents = (bot: Client) => {
+const initBotEvents = (bot: Client, socket: Socket) => {
     bot.on('ready', () => {
-        readyBot(bot)
+        readyBot(bot);
+
+        socket.emit('guilds', JSON.stringify(
+            bot.guilds
+        ))
     })
 
     bot.on('messageCreate', async (msg) => {
         console.log(msg)
+    })
+
+    bot.on('error', (err, shardID) => {
+        console.log(err)
     })
 }
 
@@ -23,18 +31,14 @@ const newBot = (token: string) => {
     return bot
 }
 
-const login = async (req: Request, res: Response) => {
-    const token: string = `${req.query.token}`
+type LoginObject = {
+    token: string
+}
 
-    const bot: Client = newBot(token)
-    initBotEvents(bot)
-    await bot.connect();
-
-    (req as any).io.emit('hi', {
-        content: 'hello'
-    })
-    
-    res.send('logged in')
+const login = async (socket: Socket, msg: LoginObject) => {
+    const bot: Client = newBot(msg.token)
+    initBotEvents(bot, socket)
+    await bot.connect(); 
 }
 
 const sendMessage = async (req: Request, res: Response) => {

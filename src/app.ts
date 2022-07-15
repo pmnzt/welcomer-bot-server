@@ -1,6 +1,7 @@
 import express, { Request, Response } from 'express'
 import { port } from './config'
 import cors from 'cors'
+import { login } from './controller/discordConroller'
 const app = express()
 const server = app.listen(port, () => {
     console.log(`server running on ${port}`)
@@ -14,7 +15,12 @@ const io = new Server(server, {
 
 io.on('connection', (socket) => { 
     console.log('a user connected');
+    socket.on('login', (msg) => {
+        login(socket, msg)
+    })
 });
+
+
 
 
 app.use(function(req,res,next){
