@@ -47,17 +47,20 @@ const login = async (socket: Socket, msg: LoginObject) => {
     await bot.connect(); 
 }
 
-const sendMessage = async (req: Request, res: Response) => {
-    const token: string = req.headers['authorization'] || ''
-    const channel_id: string = `${req.query.channel_id}`
-    const messageData = req.body
-     
+type MessageObject = {
+    content: string
+}
+
+const sendMessage = async (socket: Socket, token: string, channelId: string, message: MessageObject) => {
     const bot = new Api(token)
-    res.json(await bot.sendMessage(channel_id, messageData))
+    const response = await bot.sendMessage(channelId, message)
+    console.log(response)
+    socket.emit('message-success', response)
 }
 
 
 export {
     login,
-    sendMessage
+    sendMessage,
+    MessageObject
 }

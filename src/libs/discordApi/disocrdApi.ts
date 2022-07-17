@@ -13,10 +13,8 @@ class Client {
             method: 'post',
             body: message
         })
-
-        const data = await response.json()
  
-        return data
+        return response
     }
 }
 

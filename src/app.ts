@@ -1,7 +1,7 @@
 import express, { Request, Response } from 'express'
 import { port } from './config'
 import cors from 'cors'
-import { login } from './controller/discordConroller'
+import { login, sendMessage, MessageObject } from './controller/discordConroller'
 const app = express()
 const server = app.listen(port, () => {
     console.log(`server running on ${port}`)
@@ -17,6 +17,15 @@ io.on('connection', (socket) => {
     console.log('a user connected');
     socket.on('login', (msg) => {
         login(socket, msg)
+    })
+
+    socket.on('message', (msg) => {
+        const channelId = msg.channelId
+        const token = msg.token
+        const message: MessageObject = {
+            content: msg.content
+        }
+        sendMessage(socket, token, channelId, message)
     })
 });
 
@@ -37,4 +46,5 @@ app.get('/', (req, res) => {
 })
 
 import discordRouter from './routes/discord'
+import { Message } from 'eris'
 app.use('/discord/', discordRouter)

@@ -10,16 +10,27 @@ class Request {
         options = { method: 'get', body: undefined}
         ) {
         
-       const resposne = await fetch(`${BASE_URL}/${endpoint}`, {
-           method: options.method,
-           body: JSON.stringify(options.body),
-           headers: {
-            "content-type": "application/json",
-               'Authorization': `Bot ${this.token}`
-           }
-       })
-   
+        let resposne
+        try {
+            resposne = await fetch(`${BASE_URL}/${endpoint}`, {
+                method: options.method,
+                body: JSON.stringify(options.body),
+                headers: {
+                    "content-type": "application/json",
+                    'Authorization': `Bot ${this.token}`
+                }
+            })
+            
+            resposne = await resposne.json()
+
+        } catch(err: any) {
+            resposne = {
+                error: err.message
+            }
+        }
+
        return resposne
+   
    }
 }
 
