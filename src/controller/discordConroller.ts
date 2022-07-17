@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import Eris, { Client } from 'eris'
+import Eris, { Client, Guild } from 'eris'
 import Api from './../libs/discordApi/disocrdApi'
 import { Server, Socket } from "socket.io"
 
@@ -12,8 +12,14 @@ const initBotEvents = (bot: Client, socket: Socket) => {
     bot.on('ready', () => {
         readyBot(bot);
 
+        const guilds: any = []
+
+        bot.guilds.map((guild) => {
+            guilds.push(guild.toJSON(['iconURL']))
+        })
+
         socket.emit('guilds', JSON.stringify(
-            bot.guilds
+            guilds
         ))
     })
 
