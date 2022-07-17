@@ -1,7 +1,7 @@
 import express, { Request, Response } from 'express'
 import { port } from './config'
 import cors from 'cors'
-import { login, sendMessage, MessageObject } from './controller/discordConroller'
+import { login, sendMessage, MessageObject, sendTyping } from './controller/discordConroller'
 const app = express()
 const server = app.listen(port, () => {
     console.log(`server running on ${port}`)
@@ -26,6 +26,14 @@ io.on('connection', (socket) => {
             content: msg.content
         }
         sendMessage(socket, token, channelId, message)
+    })
+
+    socket.on('typing', (msg) => {
+        const channelId = msg.channelId
+        const token = msg.token
+        
+        sendTyping(socket, token, channelId)
+        
     })
 });
 

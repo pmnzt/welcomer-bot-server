@@ -1,4 +1,4 @@
-import { createMessage } from './Endpoints'
+import { createMessage, typing } from './Endpoints'
 import Request from './requestHandler'
 class Client {
 
@@ -14,6 +14,17 @@ class Client {
             body: message
         })
  
+        return response
+    }
+
+    async sendTyping(channel_id: string) {
+        const requset = new Request(this.token)
+
+        const response = await requset.apiCall(typing(channel_id), {
+           method: 'post', 
+           body: undefined
+        })
+
         return response
     }
 }

@@ -58,9 +58,17 @@ const sendMessage = async (socket: Socket, token: string, channelId: string, mes
     socket.emit('message-success', response)
 }
 
+const sendTyping = async (socket: Socket, token: string, channel_id: string) => {
+    const bot = new Api(token)
+    const response = await bot.sendTyping(channel_id) 
+    
+    socket.emit('typing-success', response)
+}
+
 
 export {
     login,
     sendMessage,
-    MessageObject
+    MessageObject,
+    sendTyping
 }
