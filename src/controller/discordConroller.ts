@@ -24,7 +24,9 @@ const initBotEvents = (bot: Client, socket: Socket) => {
     })
 
     bot.on('messageCreate', async (msg) => {
-        socket.emit('new-message', JSON.stringify(msg))
+        console.log(msg)
+        const message = msg.toJSON(['channel'])
+        socket.emit('new-message', JSON.stringify(message))
     })
 
     bot.on('error', (err, shardID) => {
