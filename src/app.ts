@@ -22,9 +22,7 @@ io.on('connection', (socket) => {
     socket.on('message', (msg) => {
         const channelId = msg.channelId
         const token = msg.token
-        const message: MessageObject = {
-            content: msg.content
-        }
+        const message: MessageObject = msg.content
         sendMessage(socket, token, channelId, message)
     })
 
