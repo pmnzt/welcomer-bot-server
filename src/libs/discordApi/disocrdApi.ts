@@ -1,4 +1,4 @@
-import { createMessage, typing } from './Endpoints'
+import { createMessage, typing, deleteMessage } from './Endpoints'
 import Request from './requestHandler'
 class Client {
 
@@ -23,6 +23,17 @@ class Client {
         const response = await requset.apiCall(typing(channel_id), {
            method: 'post', 
            body: undefined
+        })
+
+        return response
+    }
+
+    async deleteMessage(channel_id: string, message_id: string) {
+        const request = new Request(this.token)
+
+        const response = await request.apiCall(deleteMessage(channel_id, message_id), {
+            method: 'DELETE',
+            body: undefined
         })
 
         return response

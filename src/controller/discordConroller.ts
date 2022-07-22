@@ -67,10 +67,18 @@ const sendTyping = async (socket: Socket, token: string, channel_id: string) => 
     socket.emit('typing-success', response)
 }
 
+const deleteMessage = async (socket: Socket, token: string, channel_id: string, message_id: string) => {
+    const bot = new Api(token)
+    const response = await bot.deleteMessage(channel_id, message_id)
+
+    socket.emit('delete-success', response)
+}
+
 
 export {
     login,
     sendMessage,
     MessageObject,
-    sendTyping
+    sendTyping,
+    deleteMessage
 }

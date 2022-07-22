@@ -10,7 +10,7 @@ class Request {
         options = { method: 'get', body: undefined}
         ) {
         
-        let resposne
+        let resposne: any
         try {
             resposne = await fetch(`${BASE_URL}/${endpoint}`, {
                 method: options.method,
@@ -20,14 +20,25 @@ class Request {
                     'Authorization': `Bot ${this.token}`
                 }
             })
-            
-            resposne = await resposne.json()
+
 
         } catch(err: any) {
             resposne = {
                 error: err.message
             }
         }
+
+        const josn_resposne: any = {
+            status: resposne.status
+        }
+        
+        try {
+            josn_resposne.body = await resposne.json()
+        } catch (err) {
+            
+        }
+
+        resposne = josn_resposne
 
        return resposne
    
