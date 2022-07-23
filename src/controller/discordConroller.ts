@@ -74,11 +74,19 @@ const deleteMessage = async (socket: Socket, token: string, channel_id: string, 
     socket.emit('delete-success', response)
 }
 
+const editMessage = async (socket: Socket, token: string, channel_id: string, message_id: string, message: any) => {
+    const bot = new Api(token)
+    const response = await bot.editMessage(channel_id, message_id, message)
+    
+    socket.emit('edit-success', response)
+}
+
 
 export {
     login,
     sendMessage,
     MessageObject,
     sendTyping,
-    deleteMessage
+    deleteMessage,
+    editMessage
 }
