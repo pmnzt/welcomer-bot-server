@@ -1,4 +1,4 @@
-interface WebhookObject {
+interface CharacterObject {
     username: string,
     avatarURL: string,
     content: string
@@ -21,7 +21,7 @@ class Character {
         return message.replace(this.representUser, `<@${userId}>`)
     }
 
-    getWebhookObject(userId: string): WebhookObject {
+    getWebhookObject(userId: string): CharacterObject {
         return {
             username: this.username,
             avatarURL: this.avatar_url,
@@ -30,4 +30,7 @@ class Character {
     }
 }
 
-export default Character
+export {
+    Character,
+    CharacterObject
+}
