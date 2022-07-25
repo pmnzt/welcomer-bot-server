@@ -21,11 +21,11 @@ class Character {
         return message.replace(this.representUser, `<@${userId}>`)
     }
 
-    getWebhookObject(): WebhookObject {
+    getWebhookObject(userId: string): WebhookObject {
         return {
             username: this.username,
             avatarURL: this.avatar_url,
-            content: this.content
+            content: this.makeWelcomeMessage(this.content, userId)
         }
     }
 }
