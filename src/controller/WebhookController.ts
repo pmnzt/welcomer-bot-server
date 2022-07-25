@@ -39,11 +39,16 @@ const sendWelcomMessage = async (bot: Client, guildId: string, userId: string) =
     const finalCharacter = pickRandomCharacter(characters)
     
     // send to the webhook
-    const webhook: Webhook = await createWbhook(bot,db.channelId, 'welcomer')
-    
-    bot.executeWebhook(webhook.id, webhook.token, {
-        ...finalCharacter.getWebhookObject(userId)
-    })
+
+    try {
+        const webhook: Webhook = await createWbhook(bot,db.channelId, 'welcomer')
+        
+        bot.executeWebhook(webhook.id, webhook.token, {
+            ...finalCharacter.getWebhookObject(userId)
+        })
+    } catch(err: any) {
+        console.log(err.message)
+    }
 }
 
 
