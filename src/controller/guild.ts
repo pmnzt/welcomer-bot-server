@@ -2,6 +2,24 @@ import express, { Request, Response } from 'express'
 import Guild from '../models/Guild'
 import { CharacterObject } from './Character'
 
+const setWebhookChannel = async (req: Request, res: Response) => {
+    const { guildId, channelId } = req.body
+    if(!guildId || !channelId) return res.status(402).json({
+        error: {
+            message: 'guildId or channelId is missing'
+        }
+    })
+    
+    const guild = await Guild.findOne({ guildId: guildId })
+    ?? await addGuild(guildId)
+
+    guild.channelId = channelId
+    await guild.save()
+
+    res.status(200).json({ 
+        guild: guild
+    })
+}
 
 const addGuild = async (guildId: string) => {
     const guild = new Guild({
@@ -51,5 +69,6 @@ const addCharacter = async (req: Request, res: Response) => {
 
 export {
     addCharacter,
-    getGuild
+    getGuild,
+    setWebhookChannel
 }
