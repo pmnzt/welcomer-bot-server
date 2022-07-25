@@ -15,7 +15,7 @@ bot.on('ready', () => {
 
 bot.on('messageCreate', (message) => {
     if(message.content === '!test') {
-        testSendWelcomMessage(bot, message.author.id)
+        testSendWelcomMessage(bot, message.guildID!, message.author.id)
     }
 })
 
