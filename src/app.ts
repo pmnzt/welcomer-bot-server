@@ -4,7 +4,7 @@ import cors from 'cors'
 const app = express()
 
 import Eris, { Client } from 'eris'
-import { sendWelcomMessage, testSendWelcomMessage } from './controller/WebhookController'
+import { sendWelcomMessage } from './controller/WebhookController'
 const bot: Client = new (Eris as any)(token, {
     intents: 32767
 })
@@ -15,7 +15,7 @@ bot.on('ready', () => {
 
 bot.on('messageCreate', (message) => {
     if(message.content === '!test') {
-        testSendWelcomMessage(bot, message.guildID!, message.author.id)
+        sendWelcomMessage(bot, message.guildID!, message.author.id)
     }
 })
 

@@ -1,12 +1,10 @@
-import { channel } from 'diagnostics_channel'
-import Eris, { Client, Guild, Member, Webhook } from 'eris'
+import Eris, { Client, Webhook } from 'eris'
 import Character from './Character'
 
  
 const db = {
         guildId: '741637768597209151',
         channelId: '1000979253128605718',
-        name: 'welcomer2',
         characters: [
             { username: 'Eugene', avatar_url: 'https://exploringbits.com/wp-content/uploads/2021/09/Eugene-PFP.jpg?ezimgfmt=rs:352x467/rscb3/ng:webp/ngcb3', content: 'Hey, $$user, welcome to the server. Now listen here, kiddo, I AM NOT AN EGG!!!'}, 
             { username: 'Pablo', avatar_url: 'https://static.wikia.nocookie.net/beluga/images/9/99/Pablo.jpg/revision/latest?cb=20210730192800', content: '$$user, welcome to the server.... sweetie...' }, 
@@ -32,40 +30,7 @@ const createWbhook = async (bot: Client, channelId: string, webhookName: string)
     return webhook
 }
 
-const retriveWelcomerWebhook = async (guildWebhooks: Webhook[],bot: Client, channelId: string, webhookDefualtName: string): Promise<Webhook> => {
-    const thereAreNoWebhooks = guildWebhooks.length === 0
-    if(thereAreNoWebhooks) return await createWbhook(bot, channelId, webhookDefualtName)
-
-     
-    const guildDefaultWebhookIndex = guildWebhooks.findIndex((guildWebhook: Webhook) => {
-        return guildWebhook.name === webhookDefualtName
-    }) 
- 
-
-    const doesGuildDefaultWebhookExist = (guildDefaultWebhookIndex !== -1)
-    
-    if(!doesGuildDefaultWebhookExist) return await createWbhook(bot, channelId, webhookDefualtName)
-
-    const guildDefaultWebhook = guildWebhooks[guildDefaultWebhookIndex]
-
-    return guildDefaultWebhook
-}
-
-const sendWelcomMessage = (bot: Client, guild: Guild, member: Member) => {
-    const characters: Character[] = []
-    db.characters.forEach(character => {
-        characters.push(new Character(character.username, character.avatar_url, character.content))
-    })
-
-    const finalCharacter = pickRandomCharacter(characters)
-    bot.executeWebhook('1000912663192293396', 'uE1_aLhW8OL04QX6sEB1-nO5OP4MrWztSn01hcp5qikgJVBNrOWb9tmggDcJFN61Ypa1', {
-        ...finalCharacter.getWebhookObject(member.user.id)
-    })
-}
-
-
-// test
-const testSendWelcomMessage = async (bot: Client, guildId: string, userId: string) => {
+const sendWelcomMessage = async (bot: Client, guildId: string, userId: string) => {
     const characters: Character[] = []
     db.characters.forEach(character => {
         characters.push(new Character(character.username, character.avatar_url, character.content))
@@ -74,9 +39,7 @@ const testSendWelcomMessage = async (bot: Client, guildId: string, userId: strin
     const finalCharacter = pickRandomCharacter(characters)
     
     // send to the webhook
-    const guild = bot.guilds.get(guildId)!
-    const guildWebhooks = await guild.getWebhooks()
-    const webhook: Webhook = await retriveWelcomerWebhook(guildWebhooks, bot,db.channelId, db.name)
+    const webhook: Webhook = await createWbhook(bot,db.channelId, 'welcomer')
     
     bot.executeWebhook(webhook.id, webhook.token, {
         ...finalCharacter.getWebhookObject(userId)
@@ -85,6 +48,5 @@ const testSendWelcomMessage = async (bot: Client, guildId: string, userId: strin
 
 
 export {
-    sendWelcomMessage,
-    testSendWelcomMessage
+    sendWelcomMessage
 }
