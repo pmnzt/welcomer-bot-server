@@ -33,6 +33,16 @@ const retriveWelcomerWebhook = async (guildWebhooks: Webhook[],bot: Client, chan
 
     const guildDefaultWebhook = guildWebhooks[guildDefaultWebhookIndex]
 
+    const defualtChannelHasBeenChanged = guildDefaultWebhook.channel_id !== channelId
+
+    console.log(defualtChannelHasBeenChanged)
+
+    if(defualtChannelHasBeenChanged) {
+        bot.editWebhook(guildDefaultWebhook.id, {
+            channelID: channelId
+        })
+    }
+
     return guildDefaultWebhook
 }
 
