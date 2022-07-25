@@ -1,10 +1,12 @@
 import express, { Request, Response } from 'express'
-import { port, token } from './config'
+import { port, token, dbURI } from './config'
 import cors from 'cors'
+import mongoose from 'mongoose'
 const app = express()
 
 import Eris, { Client } from 'eris'
 import { sendWelcomMessage } from './controller/WebhookController'
+
 const bot: Client = new (Eris as any)(token, {
     intents: 32767
 })
@@ -26,23 +28,32 @@ const db = {
         ] 
 }
 
-bot.on('messageCreate', (message) => {
+bot.on('messageCreate', async (message) => {
     if(message.content === '!test') {
-        sendWelcomMessage(bot, db.characters, db.channelId, message.author.id)
+        sendWelcomMessage(bot, db.characters, message.guildID!, db.channelId, message.author.id)
     }
 })
 
 bot.connect()
+mongoose.connect(dbURI, () => {
+    console.log('db conncted')
+})
 
 app.use(cors())
 app.use(express.json())
+
+import guildRouter from './routes/guild'
 app.get('/', (req, res) => {
     res.status(200).json({
         status: 'ok'
     })
 })
+app.use('/guild', guildRouter)
+
+
 
 
 app.listen(port, () => {
     console.log(`server running on ${port}`)
 })
+

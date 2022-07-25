@@ -17,7 +17,26 @@ const createWbhook = async (bot: Client, channelId: string, webhookName: string)
     return webhook
 }
 
-const sendWelcomMessage = async (bot: Client, characters: CharacterObject[], channelId: string, userId: string) => {
+const retriveWelcomerWebhook = async (guildWebhooks: Webhook[],bot: Client, channelId: string, webhookDefualtName: string): Promise<Webhook> => {
+    const thereAreNoWebhooks = guildWebhooks.length === 0
+    if(thereAreNoWebhooks) return await createWbhook(bot, channelId, webhookDefualtName)
+
+
+    const guildDefaultWebhookIndex = guildWebhooks.findIndex((guildWebhook: Webhook) => {
+        return guildWebhook.name === webhookDefualtName
+    }) 
+
+
+    const doesGuildDefaultWebhookExist = (guildDefaultWebhookIndex !== -1)
+
+    if(!doesGuildDefaultWebhookExist) return await createWbhook(bot, channelId, webhookDefualtName)
+
+    const guildDefaultWebhook = guildWebhooks[guildDefaultWebhookIndex]
+
+    return guildDefaultWebhook
+}
+
+const sendWelcomMessage = async (bot: Client, characters: CharacterObject[], guildId: string, channelId: string, userId: string) => {
     const characterObjects: Character[] = []
 
     characters.forEach(character => {
@@ -26,10 +45,13 @@ const sendWelcomMessage = async (bot: Client, characters: CharacterObject[], cha
 
     const finalCharacter = pickRandomCharacter(characterObjects)
     
-    // send to the webhook
+    // send to the webhook channel
 
     try {
-        const webhook: Webhook = await createWbhook(bot,channelId, 'welcomer')
+        const guild = bot.guilds.get(guildId)!
+        const guildWebhooks = await guild.getWebhooks()
+
+        const webhook: Webhook = await retriveWelcomerWebhook(guildWebhooks, bot,channelId, 'welcomer')
         
         bot.executeWebhook(webhook.id, webhook.token, {
             ...finalCharacter.getWebhookObject(userId)
