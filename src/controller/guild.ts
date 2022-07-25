@@ -2,12 +2,20 @@ import express, { Request, Response } from 'express'
 import Guild from '../models/Guild'
 import { CharacterObject } from './Character'
 
+
 const addGuild = async (guildId: string) => {
     const guild = new Guild({
         guildId: guildId
     })
 
     await guild.save()
+    return guild
+}
+
+const getGuild = async (guildId: string) => {
+    const guild = await Guild.findOne({ guildId: guildId })
+    ?? await addGuild(guildId)
+
     return guild
 }
 
@@ -42,5 +50,6 @@ const addCharacter = async (req: Request, res: Response) => {
 
 
 export {
-    addCharacter
+    addCharacter,
+    getGuild
 }
