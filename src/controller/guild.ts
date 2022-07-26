@@ -64,6 +64,13 @@ const addCharacter = async (req: Request, res: Response) => {
             message: "guildId or character is missing"
         }
     })
+    if(!character.content) return res.status(402).json({
+        error: {
+            message: "at least provide a content."
+        }
+    })
+
+
     const characterItems: CharacterObject = {
         username: character.username,
         avatarURL: character.avatarURL,
