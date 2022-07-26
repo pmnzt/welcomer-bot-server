@@ -2,6 +2,11 @@ import express, { Request, Response } from 'express'
 import Guild from '../models/Guild'
 import { CharacterObject } from './Character'
 
+const retriveAllCharacters = async (guildId: string) => {
+    const characters = await Guild.find({ guildId: guildId }, 'characters')
+    return characters[0].characters
+}
+
 const setWebhookChannel = async (req: Request, res: Response) => {
     const { guildId, channelId } = req.body
     if(!guildId || !channelId) return res.status(402).json({
@@ -96,5 +101,6 @@ const addCharacter = async (req: Request, res: Response) => {
 export {
     addCharacter,
     getGuild,
-    setWebhookChannel
+    setWebhookChannel,
+    retriveAllCharacters
 }

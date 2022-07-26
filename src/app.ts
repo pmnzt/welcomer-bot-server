@@ -6,6 +6,7 @@ const app = express()
 
 import Eris, { Client } from 'eris'
 import { sendWelcomMessage } from './controller/WebhookController'
+import { CharacterObject } from './controller/Character'
 
 const bot: Client = new (Eris as any)(token, {
     intents: 32767
@@ -47,15 +48,41 @@ bot.on('interactionCreate', async (interaction) => {
     if(!interaction.data) return
     try {
         const def = await interaction.defer()
-        interaction.createFollowup({ content: 'wait bro'})
     } catch(err: any) {
         console.log(err.message)
     }
      
     if((interaction.data as any).name === "characters") {
         if((interaction.data as any).options[0].name === "all") {
-            
-            interaction.createMessage({ content: 'all'})
+            const characters: CharacterObject[] = await retriveAllCharacters(interaction.guildID!)
+
+            const charactersFields: any = []
+
+             
+            console.log(characters)
+
+            characters.forEach((character: CharacterObject) => {
+                charactersFields.push({
+                    name: `Name: ${character.username}`,
+                    value: `Message: ${character.content}`
+                })
+            })
+
+            if(characters.length === 0) {
+                charactersFields.push({
+                    name: 'Not Found',
+                    value: 'There Are No Characers in This Server',
+                    inline: true
+                })
+            }
+
+            const embed = {
+                title: 'Characters',
+                description: 'All Characters in this server',
+                fields: charactersFields
+            }
+
+            interaction.createMessage({ embeds: [embed]})
             .catch(err => {console.log(err.message)})
         }
     }
@@ -70,7 +97,7 @@ app.use(cors())
 app.use(express.json())
 
 import guildRouter from './routes/guild'
-import { getGuild } from './controller/guild'
+import { getGuild, retriveAllCharacters } from './controller/guild'
 app.get('/', (req, res) => {
     res.status(200).json({
         status: 'ok'
