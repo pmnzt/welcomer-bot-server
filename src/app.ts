@@ -41,6 +41,45 @@ bot.on('messageCreate', async (message) => {
 })
 
 
+
+bot.on('messageCreate', async (message) => {
+    if(message.content === '!all') {
+        const characters: CharacterObject[] = await retriveAllCharacters(message.guildID!)
+
+            const charactersFields: any = []
+
+             
+            console.log(characters)
+
+            characters.forEach((character: CharacterObject) => {
+                charactersFields.push({
+                    name: `Name: ${character.username}`,
+                    value: `Message: ${character.content}`
+                })
+            })
+
+            if(characters.length === 0) {
+                charactersFields.push({
+                    name: 'Not Found',
+                    value: 'There Are No Characers in This Server',
+                    inline: true
+                })
+            }
+
+            const embed = {
+                title: 'Characters',
+                description: 'All Characters in this server',
+                fields: charactersFields
+            }
+
+            try {
+                bot.createMessage(message.channel.id, { embeds: [embed]})
+            } catch(err: any) {
+                console.log(err.message)
+            }
+    }
+})
+
 bot.on('interactionCreate', async (interaction) => {
     if(interaction.type !== 2) return
     
