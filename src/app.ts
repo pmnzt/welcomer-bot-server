@@ -39,8 +39,26 @@ bot.on('messageCreate', async (message) => {
     }
 })
 
-bot.on('interactionCreate', (interaction) => {
-    console.log(interaction)
+
+bot.on('interactionCreate', async (interaction) => {
+    if(interaction.type !== 2) return
+    
+    console.log(interaction.data)
+    if(!interaction.data) return
+    try {
+        const def = await interaction.defer()
+        interaction.createFollowup({ content: 'wait bro'})
+    } catch(err: any) {
+        console.log(err.message)
+    }
+     
+    if((interaction.data as any).name === "characters") {
+        if((interaction.data as any).options[0].name === "all") {
+            
+            interaction.createMessage({ content: 'all'})
+            .catch(err => {console.log(err.message)})
+        }
+    }
 })
 
 bot.connect()
