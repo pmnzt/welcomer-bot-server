@@ -51,6 +51,8 @@ const pushCharacter = async (guildId: string, character: CharacterObject) => {
     const guild = await Guild.findOne({ guildId: guildId })
     ?? await addGuild(guildId)
 
+    if(guild.characters.length > 4) throw Error('this guild reached out the max amount of characters')
+
     guild.characters.push(character)
     await guild.save() 
 
@@ -77,9 +79,16 @@ const addCharacter = async (req: Request, res: Response) => {
         content: character.content
     }
     
-    res.status(200).json({ 
-        guild: await pushCharacter(guildId, characterItems)
-    })
+    try {
+        res.status(200).json({ 
+            guild: await pushCharacter(guildId, characterItems)
+        })
+    } catch(error: any) {
+        res.status(409).json({
+            error: error.message
+        })
+    }
+    
 
 }
 
