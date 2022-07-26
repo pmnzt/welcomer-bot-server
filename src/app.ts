@@ -39,6 +39,10 @@ bot.on('messageCreate', async (message) => {
     }
 })
 
+bot.on('interactionCreate', (interaction) => {
+    console.log(interaction)
+})
+
 bot.connect()
 mongoose.connect(dbURI, () => {
     console.log('db conncted')
