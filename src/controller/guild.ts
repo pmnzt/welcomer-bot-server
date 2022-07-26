@@ -30,9 +30,19 @@ const addGuild = async (guildId: string) => {
     return guild
 }
 
-const getGuild = async (guildId: string) => {
-    const guild = await Guild.findOne({ guildId: guildId })
-    ?? await addGuild(guildId)
+type getGuildOptions = {
+    addGuildIfNotExist: Boolean
+}
+
+const getGuild = async (guildId: string, options: getGuildOptions = { addGuildIfNotExist: true}) => {
+    let guild = {}
+    if(options.addGuildIfNotExist) {
+       guild = await Guild.findOne({ guildId: guildId })
+        ?? await addGuild(guildId)
+    } else {
+       guild = await Guild.findOne({ guildId: guildId })
+    }
+   
 
     return guild
 }

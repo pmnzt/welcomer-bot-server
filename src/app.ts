@@ -30,7 +30,9 @@ bot.on('ready', () => {
 
 bot.on('messageCreate', async (message) => {
     if(message.content === '!test') {
-        const db = await getGuild(message.guildID!)
+        const db: any = await getGuild(message.guildID!, { addGuildIfNotExist: false})
+        
+        if(!db) return
         if(!db.channelId || !db.characters.length) return
 
         sendWelcomMessage(bot, db.characters, message.guildID!, db.channelId, message.author.id)
