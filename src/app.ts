@@ -44,35 +44,7 @@ bot.on('messageCreate', async (message) => {
 
 const prefix = '!'
 bot.on('messageCreate', async (message) => {
-    if(message.content.startsWith(`${prefix}add`)) {
-        const args: any = message.content.split(/ +/)
-        args.shift()
-
-        const name = args[0]
-        const content = args[1]
-        const avatarURL = args[2]
-        if(!name || !content) return bot.createMessage(message.channel.id, 'first two args are required')
-
-        try {
-            const guild = await guildController.pushCharacter(message.guildID!, {
-                username: name,
-                content: content,
-                avatarURL: avatarURL
-            })
-            bot.createMessage(message.channel.id, {
-                embed: {
-                    title: 'Added',
-                    description: JSON.stringify(guild)
-                }
-            })
-        } catch(err: any) {
-            bot.createMessage(message.channel.id, `Error: ${err.message}`)
-        }
-
-    }  else if(message.content.startsWith(`${prefix}delete`)) {
-        
-
-    } else if(message.content.startsWith(`${prefix}edit`)) {
+    if(message.content.startsWith(`${prefix}edit`)) {
         const args: any = message.content.split(/ +/)
         args.shift()
 

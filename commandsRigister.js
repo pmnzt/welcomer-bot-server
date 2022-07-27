@@ -17,6 +17,25 @@ const charactersCommand = {
             "name": "add",
             "description": "add a new character",
             "type": 1,
+            "options": [
+                {
+                    "name": "name",
+                    "description": "the character name",
+                    "type": 3, // 3 is type STRING
+                    "required": true
+                },
+                {
+                    "name": "message",
+                    "description": "the welcoming message for this character",
+                    "type": 3, // 3 is type STRING
+                    "required": true
+                },
+                {
+                    "name": "avatar",
+                    "description": "the avatar url",
+                    "type": 3, // 3 is type STRING
+                },
+            ]
         },
         {        
             "name": "edit",
