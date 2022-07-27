@@ -104,12 +104,12 @@ bot.on('messageCreate', async (message) => {
 
 bot.on('interactionCreate', async (interaction) => {
     if(interaction.type !== 2) return
-    if(!interaction.data) return
     try {
-        const def = await interaction.defer()
+        await interaction.defer()
     } catch(err: any) {
-        console.log('here ' + err.message)
+        console.log(err.message)
     }
+    if(!interaction.data) return
 
     try {
         switch((interaction.data as any).options[0].name) {
@@ -133,7 +133,7 @@ bot.on('interactionCreate', async (interaction) => {
                 break;
         }
     } catch(err: any) {
-        console.log(`${err.message}`)
+        console.log(`Error: ${err.message}`)
     }
 })
 
@@ -161,4 +161,3 @@ app.use('/guild', guildRouter)
 app.listen(port, () => {
     console.log(`server running on ${port}`)
 })
-

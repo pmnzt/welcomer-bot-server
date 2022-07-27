@@ -5,8 +5,6 @@ const findAllCharacters = async (interaction: CommandInteraction | UnknownIntera
     const characters: CharacterObject[] = await guildController.retriveAllCharacters(interaction.guildID!)
 
             const charactersFields: any = []
-             
-            console.log(characters)
 
             characters.forEach((character: CharacterObject) => {
                 charactersFields.push({
@@ -30,18 +28,18 @@ const findAllCharacters = async (interaction: CommandInteraction | UnknownIntera
             }
 
             try {
-                interaction.createMessage({ embeds: [embed]})
+                await interaction.createMessage({ embeds: [embed]})
             } catch(err: any) {
                 console.log(err.message)
             }
 }
 
 const addCharacter = async (interaction: CommandInteraction | UnknownInteraction) => {
-    interaction.createMessage('add character')
+    
 }
 
 const editCharacter = async (interaction: CommandInteraction | UnknownInteraction) => {
-    interaction.createMessage('edit character')
+    
 }
 
 const infoCharacter = async (interaction: CommandInteraction | UnknownInteraction) => {
@@ -61,11 +59,11 @@ const infoCharacter = async (interaction: CommandInteraction | UnknownInteractio
                 }
             }
 
-            interaction.createMessage({
+            await interaction.createMessage({
                 embeds: [infoEmbed]
             })
         } catch(err: any) {
-            interaction.createMessage(`Error: ${err.message}`)
+            await interaction.createMessage(`Error: ${err.message}`).catch(err => {})
         }
 }
 
@@ -75,14 +73,14 @@ const deleteCharacter = async (interaction: CommandInteraction | UnknownInteract
         try {
             const guild = await guildController.deleteCharacter(interaction.guildID!, characterName)
 
-            interaction.createMessage({
+            await interaction.createMessage({
                 embeds: [{
                     title: 'Done!',
                     description: JSON.stringify(guild)
                 }]
             })
         } catch(err: any) {
-            interaction.createMessage(`Error: ${err.message}`)
+            await interaction.createMessage(`Error: ${err.message}`)
         }
 }
 
@@ -97,7 +95,7 @@ const setChannel = async (interaction: CommandInteraction | UnknownInteraction) 
                 }]
             })
         } catch(err: any) {
-            interaction.createMessage(`Error: ${err.message}`)
+            await interaction.createMessage(`Error: ${err.message}`)
         }
 
 }
