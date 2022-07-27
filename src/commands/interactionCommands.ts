@@ -41,7 +41,7 @@ const addCharacter = async (interaction: CommandInteraction | UnknownInteraction
     const characterAvatarUrl = ((interaction.data as any).options[0].options[2]) ? (interaction.data as any).options[0].options[2].value : ""
     
         try {
-            const guild = await guildController.pushCharacter(interaction.guildID!, {
+            const characters = await guildController.pushCharacter(interaction.guildID!, {
                 username: characterName,
                 content: characterMessage,
                 avatarURL: characterAvatarUrl
@@ -49,7 +49,7 @@ const addCharacter = async (interaction: CommandInteraction | UnknownInteraction
             await interaction.createMessage({
                 embeds: [{
                     title: 'Added',
-                    description: JSON.stringify(guild)
+                    description: JSON.stringify(characters)
                 }]
             })
         } catch(err: any) {
@@ -91,12 +91,12 @@ const deleteCharacter = async (interaction: CommandInteraction | UnknownInteract
     const characterName = (interaction.data as any).options[0].options[0].value
 
         try {
-            const guild = await guildController.deleteCharacter(interaction.guildID!, characterName)
+            const characters = await guildController.deleteCharacter(interaction.guildID!, characterName)
 
             await interaction.createMessage({
                 embeds: [{
                     title: 'Done!',
-                    description: JSON.stringify(guild)
+                    description: JSON.stringify(characters)
                 }]
             })
         } catch(err: any) {

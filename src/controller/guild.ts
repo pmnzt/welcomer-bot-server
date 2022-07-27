@@ -31,7 +31,7 @@ const deleteCharacter = async (guildId: string, characterName: string) => {
 
     guild.characters.splice(characterIndex, 1)
     await guild.save() 
-    return guild
+    return guild.characters
 }
 
 const editCharacter = async (guildId: string, characterName: string, character: CharacterObject) => {
@@ -105,7 +105,7 @@ const pushCharacter = async (guildId: string, character: CharacterObject) => {
     guild.characters.push(character)
     await guild.save() 
 
-    return guild
+    return guild.characters
 }
 
 export default {
