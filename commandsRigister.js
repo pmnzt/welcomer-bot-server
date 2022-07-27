@@ -35,6 +35,14 @@ const charactersCommand = {
             "name": "info",
             "description": "get infos about an existing character",
             "type": 1,
+            "options": [
+                {
+                    "name": "name",
+                    "description": "the character name to be edited",
+                    "type": 3, // 3 is type STRING
+                    "required": true
+                }
+            ]
         },
         {        
             "name": "delete",

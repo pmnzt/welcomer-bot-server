@@ -31,7 +31,7 @@ bot.on('ready', () => {
 
 bot.on('messageCreate', async (message) => {
     if(message.content === '!test') {
-        const db: any = await getGuild(message.guildID!, { addGuildIfNotExist: false})
+        const db: any = await guildController.getGuild(message.guildID!, { addGuildIfNotExist: false})
         
         if(!db) return
         if(!db.channelId || !db.characters.length) return
@@ -44,41 +44,7 @@ bot.on('messageCreate', async (message) => {
 
 const prefix = '!'
 bot.on('messageCreate', async (message) => {
-    if(message.content === `${prefix}all`) {
-        const characters: CharacterObject[] = await retriveAllCharacters(message.guildID!)
-
-            const charactersFields: any = []
-
-             
-            console.log(characters)
-
-            characters.forEach((character: CharacterObject) => {
-                charactersFields.push({
-                    name: `Name: ${character.username}`,
-                    value: `Message: ${character.content}`
-                })
-            })
-
-            if(characters.length === 0) {
-                charactersFields.push({
-                    name: 'Not Found',
-                    value: 'There Are No Characers in This Server',
-                    inline: true
-                })
-            }
-
-            const embed = {
-                title: 'Characters',
-                description: 'All Characters in this server',
-                fields: charactersFields
-            }
-
-            try {
-                bot.createMessage(message.channel.id, { embeds: [embed]})
-            } catch(err: any) {
-                console.log(err.message)
-            }
-    } else if(message.content.startsWith(`${prefix}add`)) {
+    if(message.content.startsWith(`${prefix}add`)) {
         const args: any = message.content.split(/ +/)
         args.shift()
 
@@ -88,7 +54,7 @@ bot.on('messageCreate', async (message) => {
         if(!name || !content) return bot.createMessage(message.channel.id, 'first two args are required')
 
         try {
-            const guild = await pushCharacter(message.guildID!, {
+            const guild = await guildController.pushCharacter(message.guildID!, {
                 username: name,
                 content: content,
                 avatarURL: avatarURL
@@ -103,44 +69,8 @@ bot.on('messageCreate', async (message) => {
             bot.createMessage(message.channel.id, `Error: ${err.message}`)
         }
 
-    } else if(message.content.startsWith(`${prefix}channel`)) {
-        const args: any = message.content.split(/ +/)
-        args.shift()
-
-        const channelID = args[0]
-        if(!channelID) return bot.createMessage(message.channel.id, 'channel id is required')
-
-        try {
-            const guild = await setWebhookChannel(message.guildID!, channelID)
-            bot.createMessage(message.channel.id, {
-                embed: {
-                    title: 'Done!',
-                    description: JSON.stringify(guild)
-                }
-            })
-        } catch(err: any) {
-            bot.createMessage(message.channel.id, `Error: ${err.message}`)
-        }
- 
-    } else if(message.content.startsWith(`${prefix}delete`)) {
-        const args: any = message.content.split(/ +/)
-        args.shift()
-
-        const characterName = args[0]
-        if(!characterName) return bot.createMessage(message.channel.id, 'character name is required')
-
-        try {
-            const guild = await deleteCharacter(message.guildID!, characterName)
-
-            bot.createMessage(message.channel.id, {
-                embed: {
-                    title: 'Done!',
-                    description: JSON.stringify(guild)
-                }
-            })
-        } catch(err: any) {
-            bot.createMessage(message.channel.id, `Error: ${err.message}`)
-        }
+    }  else if(message.content.startsWith(`${prefix}delete`)) {
+        
 
     } else if(message.content.startsWith(`${prefix}edit`)) {
         const args: any = message.content.split(/ +/)
@@ -154,7 +84,7 @@ bot.on('messageCreate', async (message) => {
         if(!originalName || !name || !content) return bot.createMessage(message.channel.id, 'the original name and the new name and the content are required')
 
         try {
-            const guild = await editCharacter(message.guildID!,originalName, {
+            const guild = await guildController.editCharacter(message.guildID!,originalName, {
                 username: name,
                 content: content,
                 avatarURL: avatarURL
@@ -169,73 +99,41 @@ bot.on('messageCreate', async (message) => {
             bot.createMessage(message.channel.id, `Error: ${err.message}`)
         }
 
-    } else if(message.content.startsWith(`${prefix}get`)) {
-        const args: any = message.content.split(/ +/)
-        args.shift()
-
-        const characterName = args[0]
-        if(!characterName) return bot.createMessage(message.channel.id, 'character name is required')
-
-        try {
-            const character = await getCharacter(message.guildID!, characterName)
-
-            bot.createMessage(message.channel.id, {
-                embed: {
-                    title: 'Done!',
-                    description: JSON.stringify(character)
-                }
-            })
-        } catch(err: any) {
-            bot.createMessage(message.channel.id, `Error: ${err.message}`)
-        }
-
     }
 })
 
 bot.on('interactionCreate', async (interaction) => {
     if(interaction.type !== 2) return
-    
-    console.log(interaction.data)
     if(!interaction.data) return
     try {
         const def = await interaction.defer()
     } catch(err: any) {
-        console.log(err.message)
+        console.log('here ' + err.message)
     }
-     
-    if((interaction.data as any).name === "characters") {
-        if((interaction.data as any).options[0].name === "all") {
-            const characters: CharacterObject[] = await retriveAllCharacters(interaction.guildID!)
 
-            const charactersFields: any = []
-
-             
-            console.log(characters)
-
-            characters.forEach((character: CharacterObject) => {
-                charactersFields.push({
-                    name: `Name: ${character.username}`,
-                    value: `Message: ${character.content}`
-                })
-            })
-
-            if(characters.length === 0) {
-                charactersFields.push({
-                    name: 'Not Found',
-                    value: 'There Are No Characers in This Server',
-                    inline: true
-                })
-            }
-
-            const embed = {
-                title: 'Characters',
-                description: 'All Characters in this server',
-                fields: charactersFields
-            }
-
-            interaction.createMessage({ embeds: [embed]})
-            .catch(err => {console.log(err.message)})
+    try {
+        switch((interaction.data as any).options[0].name) {
+            case "all":
+                interactionCommands.findAllCharacters(interaction)
+                break;
+            case "add": 
+                    interactionCommands.addCharacter(interaction)
+                break;
+            case "edit": 
+                    interactionCommands.editCharacter(interaction)
+                break;
+            case "info":
+                    interactionCommands.infoCharacter(interaction)
+                break;
+            case "delete":
+                    interactionCommands.deleteCharacter(interaction)
+                break;
+            case "channel":
+                    interactionCommands.setChannel(interaction)
+                break;
         }
+    } catch(err: any) {
+        console.log(`${err.message}`)
     }
 })
 
@@ -248,7 +146,8 @@ app.use(cors())
 app.use(express.json())
 
 import guildRouter from './routes/guild'
-import { deleteCharacter, editCharacter, getCharacter, getGuild, pushCharacter, retriveAllCharacters, setWebhookChannel } from './controller/guild'
+import guildController from './controller/guild'
+import interactionCommands from './commands/interactionCommands'
 app.get('/', (req, res) => {
     res.status(200).json({
         status: 'ok'

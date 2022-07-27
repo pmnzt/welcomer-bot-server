@@ -108,7 +108,7 @@ const pushCharacter = async (guildId: string, character: CharacterObject) => {
     return guild
 }
 
-export {
+export default {
     retriveAllCharacters,
     getCharacter,
     pushCharacter,
