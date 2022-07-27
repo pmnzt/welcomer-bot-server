@@ -95,6 +95,13 @@ const pushCharacter = async (guildId: string, character: CharacterObject) => {
 
     if(guild.characters.length > 4) throw Error('this guild reached out the max amount of characters')
 
+    const characterIndex = guild.characters.findIndex((item: CharacterObject) => {
+        return item.username === character.username
+    })
+
+    const existedCharacter = (characterIndex !== -1)
+    if(existedCharacter) throw Error('this Character exists already')
+
     guild.characters.push(character)
     await guild.save() 
 
