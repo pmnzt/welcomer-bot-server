@@ -1,4 +1,3 @@
-import express, { Request, Response } from 'express'
 import Guild from '../models/Guild'
 import { CharacterObject } from './Character'
 
@@ -7,13 +6,53 @@ const retriveAllCharacters = async (guildId: string) => {
     return characters[0].characters
 }
 
-const setWebhookChannel = async (req: Request, res: Response) => {
-    const { guildId, channelId } = req.body
-    if(!guildId || !channelId) return res.status(402).json({
-        error: {
-            message: 'guildId or channelId is missing'
-        }
+const getCharacter = async (guildId: string, characterName: string) => {
+    const guild = await Guild.findOne({ guildId: guildId })
+    if(!guild) throw Error('this character doesnt exist!');
+
+    const characterIndex = guild.characters.findIndex((character: CharacterObject) => {
+        return character.username === characterName
     })
+
+    if(characterIndex === -1) throw Error('this character doesnt exist');
+
+    return guild.characters[characterIndex]
+}
+
+const deleteCharacter = async (guildId: string, characterName: string) => {
+    const guild = await Guild.findOne({ guildId: guildId })
+    if(!guild) throw Error('this character doesnt exist!');
+
+    const characterIndex = guild.characters.findIndex((character: CharacterObject) => {
+        return character.username === characterName
+    })
+
+    if(characterIndex === -1) throw Error('this character doesnt exist');
+
+    guild.characters.splice(characterIndex, 1)
+    await guild.save() 
+    return guild
+}
+
+const editCharacter = async (guildId: string, characterName: string, character: CharacterObject) => {
+    const guild = await Guild.findOne({ guildId: guildId })
+    if(!guild) throw Error('this character doesnt exist!');
+
+    const characterIndex = guild.characters.findIndex((character: CharacterObject) => {
+        return character.username === characterName
+    })
+
+    
+    if(characterIndex === -1) throw Error('this character doesnt exist');
+    
+    guild.characters[characterIndex] = character
+
+    await guild.save() 
+    return guild
+}
+
+const setWebhookChannel = async (guildId: string, channelId: string) => {
+    if(!guildId || !channelId) throw Error('guildId or channelId is missing')
     
     const guild = await Guild.findOne({ guildId: guildId })
     ?? await addGuild(guildId)
@@ -21,9 +60,7 @@ const setWebhookChannel = async (req: Request, res: Response) => {
     guild.channelId = channelId
     await guild.save()
 
-    res.status(200).json({ 
-        guild: guild
-    })
+    return guild
 }
 
 const addGuild = async (guildId: string) => {
@@ -64,43 +101,12 @@ const pushCharacter = async (guildId: string, character: CharacterObject) => {
     return guild
 }
 
-const addCharacter = async (req: Request, res: Response) => {
-    const { guildId, character } = req.body
-    if(!guildId || !character) return res.status(402).json({
-        error: {
-            message: "guildId or character is missing"
-        }
-    })
-    if(!character.content) return res.status(402).json({
-        error: {
-            message: "at least provide a content."
-        }
-    })
-
-
-    const characterItems: CharacterObject = {
-        username: character.username,
-        avatarURL: character.avatarURL,
-        content: character.content
-    }
-    
-    try {
-        res.status(200).json({ 
-            guild: await pushCharacter(guildId, characterItems)
-        })
-    } catch(error: any) {
-        res.status(409).json({
-            error: error.message
-        })
-    }
-    
-
-}
-
-
 export {
-    addCharacter,
+    retriveAllCharacters,
+    getCharacter,
+    pushCharacter,
+    editCharacter,
     getGuild,
     setWebhookChannel,
-    retriveAllCharacters
+    deleteCharacter
 }

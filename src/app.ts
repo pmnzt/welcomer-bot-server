@@ -42,8 +42,9 @@ bot.on('messageCreate', async (message) => {
 
 
 
+const prefix = '!'
 bot.on('messageCreate', async (message) => {
-    if(message.content === '!all') {
+    if(message.content === `${prefix}all`) {
         const characters: CharacterObject[] = await retriveAllCharacters(message.guildID!)
 
             const charactersFields: any = []
@@ -77,6 +78,117 @@ bot.on('messageCreate', async (message) => {
             } catch(err: any) {
                 console.log(err.message)
             }
+    } else if(message.content.startsWith(`${prefix}add`)) {
+        const args: any = message.content.split(/ +/)
+        args.shift()
+
+        const name = args[0]
+        const content = args[1]
+        const avatarURL = args[2]
+        if(!name || !content) return bot.createMessage(message.channel.id, 'first two args are required')
+
+        try {
+            const guild = await pushCharacter(message.guildID!, {
+                username: name,
+                content: content,
+                avatarURL: avatarURL
+            })
+            bot.createMessage(message.channel.id, {
+                embed: {
+                    title: 'Added',
+                    description: JSON.stringify(guild)
+                }
+            })
+        } catch(err: any) {
+            bot.createMessage(message.channel.id, `Error: ${err.message}`)
+        }
+
+    } else if(message.content.startsWith(`${prefix}channel`)) {
+        const args: any = message.content.split(/ +/)
+        args.shift()
+
+        const channelID = args[0]
+        if(!channelID) return bot.createMessage(message.channel.id, 'channel id is required')
+
+        try {
+            const guild = await setWebhookChannel(message.guildID!, channelID)
+            bot.createMessage(message.channel.id, {
+                embed: {
+                    title: 'Done!',
+                    description: JSON.stringify(guild)
+                }
+            })
+        } catch(err: any) {
+            bot.createMessage(message.channel.id, `Error: ${err.message}`)
+        }
+ 
+    } else if(message.content.startsWith(`${prefix}delete`)) {
+        const args: any = message.content.split(/ +/)
+        args.shift()
+
+        const characterName = args[0]
+        if(!characterName) return bot.createMessage(message.channel.id, 'character name is required')
+
+        try {
+            const guild = await deleteCharacter(message.guildID!, characterName)
+
+            bot.createMessage(message.channel.id, {
+                embed: {
+                    title: 'Done!',
+                    description: JSON.stringify(guild)
+                }
+            })
+        } catch(err: any) {
+            bot.createMessage(message.channel.id, `Error: ${err.message}`)
+        }
+
+    } else if(message.content.startsWith(`${prefix}edit`)) {
+        const args: any = message.content.split(/ +/)
+        args.shift()
+
+        const originalName = args[0]
+        const name = args[1]
+        const content = args[2]
+        const avatarURL = args[3]
+
+        if(!originalName || !name || !content) return bot.createMessage(message.channel.id, 'the original name and the new name and the content are required')
+
+        try {
+            const guild = await editCharacter(message.guildID!,originalName, {
+                username: name,
+                content: content,
+                avatarURL: avatarURL
+            })
+            bot.createMessage(message.channel.id, {
+                embed: {
+                    title: 'Edited',
+                    description: JSON.stringify(guild)
+                }
+            })
+        } catch(err: any) {
+            bot.createMessage(message.channel.id, `Error: ${err.message}`)
+        }
+
+    } else if(message.content.startsWith(`${prefix}get`)) {
+        const args: any = message.content.split(/ +/)
+        args.shift()
+
+        const characterName = args[0]
+        if(!characterName) return bot.createMessage(message.channel.id, 'character name is required')
+
+        try {
+            const character = await getCharacter(message.guildID!, characterName)
+
+            bot.createMessage(message.channel.id, {
+                embed: {
+                    title: 'Done!',
+                    description: JSON.stringify(character)
+                }
+            })
+        } catch(err: any) {
+            bot.createMessage(message.channel.id, `Error: ${err.message}`)
+        }
+
     }
 })
 
@@ -136,7 +248,7 @@ app.use(cors())
 app.use(express.json())
 
 import guildRouter from './routes/guild'
-import { getGuild, retriveAllCharacters } from './controller/guild'
+import { deleteCharacter, editCharacter, getCharacter, getGuild, pushCharacter, retriveAllCharacters, setWebhookChannel } from './controller/guild'
 app.get('/', (req, res) => {
     res.status(200).json({
         status: 'ok'
