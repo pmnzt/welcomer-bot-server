@@ -1,10 +1,10 @@
 import { CommandInteraction, UnknownInteraction } from 'eris'
+import { embedsColor } from '../config'
 import { CharacterObject } from '../controller/Character'
 import guildController from '../controller/guild'
-const findAllCharacters = async (interaction: CommandInteraction | UnknownInteraction) => {
-    const characters: CharacterObject[] = await guildController.retriveAllCharacters(interaction.guildID!)
 
-            const charactersFields: any = []
+const formatCharactersEmbed = (characters: CharacterObject[]) => {
+    const charactersFields: any = []
 
             characters.forEach((character: CharacterObject) => {
                 charactersFields.push({
@@ -24,8 +24,33 @@ const findAllCharacters = async (interaction: CommandInteraction | UnknownIntera
             const embed = {
                 title: 'Characters',
                 description: 'All Characters in this server',
-                fields: charactersFields
+                fields: charactersFields,
+                color: embedsColor
             }
+
+            return embed
+}
+
+const formatASingalCharacterEmbed = (character: CharacterObject) => {
+    const embed: any = {
+        title: `${character.username}`,
+        description: `${character.content}`,
+        color: embedsColor
+    }
+
+    if(character.avatarURL) {
+        embed.thumbnail = {
+            url: `${character.avatarURL}`
+        }
+    }
+
+    return embed
+}
+
+const findAllCharacters = async (interaction: CommandInteraction | UnknownInteraction) => {
+    const characters: CharacterObject[] = await guildController.retriveAllCharacters(interaction.guildID!)
+
+            const embed: any = formatCharactersEmbed(characters)
 
             try {
                 await interaction.createMessage({ embeds: [embed]})
@@ -46,11 +71,10 @@ const addCharacter = async (interaction: CommandInteraction | UnknownInteraction
                 content: characterMessage,
                 avatarURL: characterAvatarUrl
             })
+
+            const embed: any = formatCharactersEmbed(characters)
             await interaction.createMessage({
-                embeds: [{
-                    title: 'Added',
-                    description: JSON.stringify(characters)
-                }]
+                embeds: [embed]
             })
         } catch(err: any) {
             console.log(`Error: ${err.message}`)
@@ -68,16 +92,7 @@ const infoCharacter = async (interaction: CommandInteraction | UnknownInteractio
         try {
             const character: CharacterObject = await guildController.getCharacter(interaction.guildID!, characterName)
 
-            const infoEmbed: any = {
-                title: `${character.username}`,
-                description: `${character.content}`,
-            }
-
-            if(character.avatarURL) {
-                infoEmbed.thumbnail = {
-                    url: `${character.avatarURL}`
-                }
-            }
+            const infoEmbed: any = formatASingalCharacterEmbed(character)
 
             await interaction.createMessage({
                 embeds: [infoEmbed]
@@ -93,12 +108,13 @@ const deleteCharacter = async (interaction: CommandInteraction | UnknownInteract
         try {
             const characters = await guildController.deleteCharacter(interaction.guildID!, characterName)
 
-            await interaction.createMessage({
-                embeds: [{
-                    title: 'Done!',
-                    description: JSON.stringify(characters)
-                }]
-            })
+            const embed: any = formatCharactersEmbed(characters)
+
+            try {
+                await interaction.createMessage({ embeds: [embed]})
+            } catch(err: any) {
+                console.log(err.message)
+            }
         } catch(err: any) {
             await interaction.createMessage(`Error: ${err.message}`).catch(err => console.log(`Error: ${err.message}`))
         }
