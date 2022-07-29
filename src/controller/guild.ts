@@ -102,11 +102,34 @@ const pushCharacter = async (guildId: string, character: CharacterObject) => {
     const existedCharacter = (characterIndex !== -1)
     if(existedCharacter) throw Error('this Character exists already')
 
+    if(!character.username || !character.content) {
+        throw Error('please provide a name and a content message')
+    }
+
+    if((character.content).length > 100) {
+        throw Error('message content could not be longer than 100 char')
+    }
+
+    if((character.username).length > 80) {
+        throw Error('characters names could not be longer than 80 char')
+    }
+
+    if(character.avatarURL) {
+        if(!validateUrl(character.avatarURL)) {
+            throw Error('provide a valid url for avatar')
+        }
+    }
+    
+
     guild.characters.push(character)
     await guild.save() 
 
     return guild.characters
 }
+
+function validateUrl(value: string) {
+    return /^(?:(?:(?:https?|ftp):)?\/\/)(?:\S+(?::\S*)?@)?(?:(?!(?:10|127)(?:\.\d{1,3}){3})(?!(?:169\.254|192\.168)(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)(?:\.(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)*(?:\.(?:[a-z\u00a1-\uffff]{2,})))(?::\d{2,5})?(?:[/?#]\S*)?$/i.test(value);
+  }
 
 export default {
     retriveAllCharacters,
