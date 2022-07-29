@@ -43,11 +43,28 @@ const charactersCommand = {
             "type": 1, 
             "options": [
                 {
-                    "name": "name",
-                    "description": "the character name to be edited",
+                    "name": "target",
+                    "description": "the target character name",
                     "type": 3, // 3 is type STRING
                     "required": true
-                }
+                },
+                {
+                    "name": "name",
+                    "description": "the character name",
+                    "type": 3, // 3 is type STRING
+                    "required": true
+                },
+                {
+                    "name": "message",
+                    "description": "the welcoming message for this character",
+                    "type": 3, // 3 is type STRING
+                    "required": true
+                },
+                {
+                    "name": "avatar",
+                    "description": "the avatar url",
+                    "type": 3, // 3 is type STRING
+                },
             ]
         },
         {        
