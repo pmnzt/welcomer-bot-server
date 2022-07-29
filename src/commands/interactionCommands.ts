@@ -83,7 +83,38 @@ const addCharacter = async (interaction: CommandInteraction | UnknownInteraction
 }
 
 const editCharacter = async (interaction: CommandInteraction | UnknownInteraction) => {
+    // console.log(getOption((interaction.data as any).options[0].options, "name"), getOption((interaction.data as any).options[0].options, "message"), getOption((interaction.data as any).options[0].options, "avatar"))
+
+
+    const targetCharacter = (interaction.data as any).options[0].options[0].value
+
+    // optinal value
+    const characterName = getOption((interaction.data as any).options[0].options, "name") ? getOption((interaction.data as any).options[0].options, "name").value : ""
+
+    // optinal value
+    const characterMessage = getOption((interaction.data as any).options[0].options, "message") ? getOption((interaction.data as any).options[0].options, "message").value : ""
+
+    // optinal value
+    const characterAvatarUrl = getOption((interaction.data as any).options[0].options, "avatar") ? getOption((interaction.data as any).options[0].options, "avatar").value : ""
+
     
+
+    try {
+        const character = await guildController.editCharacter(interaction.guildID!, targetCharacter, {
+            username: characterName,
+            content: characterMessage,
+            avatarURL: characterAvatarUrl
+        })
+
+        const embed: any = formatASingalCharacterEmbed(character)
+        await interaction.createMessage({
+            embeds: [embed]
+        })
+    } catch(err: any) {
+        console.log(`Error: ${err.message}`)
+        await interaction.createMessage(`Error: ${err.message}`).catch(err => console.log(err.message))
+    }
+
 }
 
 const infoCharacter = async (interaction: CommandInteraction | UnknownInteraction) => {
@@ -137,6 +168,10 @@ const setChannel = async (interaction: CommandInteraction | UnknownInteraction) 
             await interaction.createMessage(`Error: ${err.message}`).catch(err => {})
         }
 
+}
+
+function getOption(options: any, name: string) {
+    return options.find((option: any) => option.name === name)
 }
 
 export default {

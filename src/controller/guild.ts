@@ -45,10 +45,30 @@ const editCharacter = async (guildId: string, characterName: string, character: 
     
     if(characterIndex === -1) throw Error('this character doesnt exist');
     
-    guild.characters[characterIndex] = character
+    if(character.username) {
+        if((character.username).length > 80) {
+            throw Error('characters names could not be longer than 80 char')
+        }
+        guild.characters[characterIndex].username = character.username
+    }
 
+    if(character.content) {
+        if((character.content).length > 100) {
+            throw Error('message content could not be longer than 100 char')
+        }
+        guild.characters[characterIndex].content = character.content
+    }
+
+    if(character.avatarURL) {
+        if(!validateUrl(character.avatarURL)) {
+            throw Error('provide a valid url for avatar')
+        }
+        guild.characters[characterIndex].avatarURL = character.avatarURL
+    }
+
+    guild.markModified('characters')
     await guild.save() 
-    return guild
+    return guild.characters[characterIndex]
 }
 
 const setWebhookChannel = async (guildId: string, channelId: string) => {

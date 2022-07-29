@@ -51,14 +51,12 @@ const charactersCommand = {
                 {
                     "name": "name",
                     "description": "the character name",
-                    "type": 3, // 3 is type STRING
-                    "required": true
+                    "type": 3,
                 },
                 {
                     "name": "message",
                     "description": "the welcoming message for this character",
-                    "type": 3, // 3 is type STRING
-                    "required": true
+                    "type": 3,
                 },
                 {
                     "name": "avatar",
