@@ -16,18 +16,6 @@ bot.on('ready', () => {
     console.log(`${bot.user.username} is ready!`)
 })
 
-// const db = {
-//     guildId: '741637768597209151',
-//     channelId: '1000979253128605718',
-//     characters: [
-//         { username: 'Eugene', avatarURL: 'https://exploringbits.com/wp-content/uploads/2021/09/Eugene-PFP.jpg?ezimgfmt=rs:352x467/rscb3/ng:webp/ngcb3', content: 'Hey, $$user, welcome to the server. Now listen here, kiddo, I AM NOT AN EGG!!!'}, 
-//         { username: 'Pablo', avatarURL: 'https://static.wikia.nocookie.net/beluga/images/9/99/Pablo.jpg/revision/latest?cb=20210730192800', content: '$$user, welcome to the server.... sweetie...' }, 
-//         { username: 'Ralph', avatarURL: 'https://static.wikia.nocookie.net/beluga/images/9/95/Ralph.jpg/revision/latest/top-crop/width/360/height/360?cb=20220107044446', content: 'Welcome to the server $$user. We have a few rules.' }, 
-//         { username: 'belu-mom 🌸', avatarURL: 'https://static.wikia.nocookie.net/beluga/images/0/0d/Belu-mom.png/revision/latest?cb=20211211211134', content: ':bell: :bell: :bell: Welcome $$user, I hope you are more well behaved than my son Beluga....' }, 
-//         { username: 'skittle', avatarURL: 'https://static.wikia.nocookie.net/beluga/images/f/f6/Skittle.jpg/revision/latest?cb=20210730213705', content: "I am Beluga's best friend. Maybe I can also be friends with $$user, they just joined the server." }, 
-//         { username: 'hecker', avatarURL: 'https://static.wikia.nocookie.net/beluga/images/e/ea/Avahecher.png/revision/latest?cb=20220518222816&path-prefix=ru', content: "$ sudo heck welcome $$user" } 
-//         ] 
-// }
 
 bot.on('messageCreate', async (message) => {
     if(message.content === '!test') {
@@ -40,38 +28,13 @@ bot.on('messageCreate', async (message) => {
     }
 })
 
+bot.on('guildMemberAdd', async (guild, member) => {
+    const db: any = await guildController.getGuild(guild.id, { addGuildIfNotExist: false})
+        
+        if(!db) return
+        if(!db.channelId || !db.characters.length) return
 
-
-const prefix = '!'
-bot.on('messageCreate', async (message) => {
-    if(message.content.startsWith(`${prefix}edit`)) {
-        const args: any = message.content.split(/ +/)
-        args.shift()
-
-        const originalName = args[0]
-        const name = args[1]
-        const content = args[2]
-        const avatarURL = args[3]
-
-        if(!originalName || !name || !content) return bot.createMessage(message.channel.id, 'the original name and the new name and the content are required')
-
-        try {
-            const guild = await guildController.editCharacter(message.guildID!,originalName, {
-                username: name,
-                content: content,
-                avatarURL: avatarURL
-            })
-            bot.createMessage(message.channel.id, {
-                embed: {
-                    title: 'Edited',
-                    description: JSON.stringify(guild)
-                }
-            })
-        } catch(err: any) {
-            bot.createMessage(message.channel.id, `Error: ${err.message}`)
-        }
-
-    }
+        sendWelcomMessage(bot, db.characters, guild.id, db.channelId, member.user.id)
 })
 
 bot.on('interactionCreate', async (interaction) => {
