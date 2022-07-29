@@ -11,7 +11,7 @@ const getCharacter = async (guildId: string, characterName: string) => {
     if(!guild) throw Error('this character doesnt exist!');
 
     const characterIndex = guild.characters.findIndex((character: CharacterObject) => {
-        return character.username === characterName
+        return (character.username).toLocaleLowerCase() === (characterName).toLocaleLowerCase()
     })
 
     if(characterIndex === -1) throw Error('this character doesnt exist');
@@ -24,7 +24,7 @@ const deleteCharacter = async (guildId: string, characterName: string) => {
     if(!guild) throw Error('this character doesnt exist!');
 
     const characterIndex = guild.characters.findIndex((character: CharacterObject) => {
-        return character.username === characterName
+        return (character.username).toLocaleLowerCase() === (characterName).toLocaleLowerCase()
     })
 
     if(characterIndex === -1) throw Error('this character doesnt exist');
