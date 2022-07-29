@@ -124,6 +124,9 @@ const setChannel = async (interaction: CommandInteraction | UnknownInteraction) 
     const channelID = (interaction.data as any).options[0].options[0].value
 
         try {
+            if((channelID).length > 50 || isNaN(channelID)) {
+                throw Error('please enter a valid channel id')
+            } 
             await guildController.setWebhookChannel(interaction.guildID!, channelID)
             interaction.createMessage({ embeds: [{
                     title: 'New Welcoming channel',
