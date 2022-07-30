@@ -136,19 +136,11 @@ const infoCharacter = async (interaction: CommandInteraction | UnknownInteractio
 const deleteCharacter = async (interaction: CommandInteraction | UnknownInteraction) => {
     const characterName = (interaction.data as any).options[0].options[0].value
 
-        try {
             const characters = await guildController.deleteCharacter(interaction.guildID!, characterName)
 
             const embed: any = formatCharactersEmbed(characters)
 
-            try {
-                await interaction.createMessage({ embeds: [embed]})
-            } catch(err: any) {
-                console.log(err.message)
-            }
-        } catch(err: any) {
-            await interaction.createMessage(`Error: ${err.message}`).catch(err => console.log(`Error: ${err.message}`))
-        }
+            return await interaction.createMessage({ embeds: [embed]})
 }
 
 const setChannel = async (interaction: CommandInteraction | UnknownInteraction) => {

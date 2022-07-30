@@ -64,7 +64,7 @@ bot.on('interactionCreate', async (interaction) => {
                     interactionCommands.infoCharacter(interaction)
                 break;
             case "delete":
-                    interactionCommands.deleteCharacter(interaction)
+                    await interactionCommands.deleteCharacter(interaction)
                 break;
             case "channel":
                     interactionCommands.setChannel(interaction)
