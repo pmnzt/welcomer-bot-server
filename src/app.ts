@@ -52,26 +52,26 @@ bot.on('interactionCreate', async (interaction) => {
         }
         switch((interaction.data as any).options[0].name) {
             case "all":
-                interactionCommands.findAllCharacters(interaction)
+                await interactionCommands.findAllCharacters(interaction)
                 break;
             case "add": 
-                    interactionCommands.addCharacter(interaction)
+                    await interactionCommands.addCharacter(interaction)
                 break;
             case "edit": 
-                    interactionCommands.editCharacter(interaction)
+                    await interactionCommands.editCharacter(interaction)
                 break;
             case "info":
-                    interactionCommands.infoCharacter(interaction)
+                    await interactionCommands.infoCharacter(interaction)
                 break;
             case "delete":
                     await interactionCommands.deleteCharacter(interaction)
                 break;
             case "channel":
-                    interactionCommands.setChannel(interaction)
+                    await interactionCommands.setChannel(interaction)
                 break;
         }
     } catch(err: any) {
-        interaction.createMessage({ content: `Error: ${err.message}`, flags: 64 })
+        interaction.createMessage({ content: `An Error: ${err.message}`, flags: 64 })
     }
 })
 

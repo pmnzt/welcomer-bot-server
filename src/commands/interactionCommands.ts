@@ -52,11 +52,7 @@ const findAllCharacters = async (interaction: CommandInteraction | UnknownIntera
 
             const embed: any = formatCharactersEmbed(characters)
 
-            try {
-                await interaction.createMessage({ embeds: [embed]})
-            } catch(err: any) {
-                console.log(err.message)
-            }
+            return await interaction.createMessage({ embeds: [embed]})
 }
 
 const addCharacter = async (interaction: CommandInteraction | UnknownInteraction) => {
@@ -65,7 +61,6 @@ const addCharacter = async (interaction: CommandInteraction | UnknownInteraction
     // optinal value
     const characterAvatarUrl = ((interaction.data as any).options[0].options[2]) ? (interaction.data as any).options[0].options[2].value : ""
     
-        try {
             const characters = await guildController.pushCharacter(interaction.guildID!, {
                 username: characterName,
                 content: characterMessage,
@@ -73,13 +68,9 @@ const addCharacter = async (interaction: CommandInteraction | UnknownInteraction
             })
 
             const embed: any = formatCharactersEmbed(characters)
-            await interaction.createMessage({
+            return await interaction.createMessage({
                 embeds: [embed]
             })
-        } catch(err: any) {
-            console.log(`Error: ${err.message}`)
-            await interaction.createMessage(`Error: ${err.message}`).catch(err => console.log(err.message))
-        }
 }
 
 const editCharacter = async (interaction: CommandInteraction | UnknownInteraction) => {
@@ -97,9 +88,6 @@ const editCharacter = async (interaction: CommandInteraction | UnknownInteractio
     // optinal value
     const characterAvatarUrl = getOption((interaction.data as any).options[0].options, "avatar") ? getOption((interaction.data as any).options[0].options, "avatar").value : ""
 
-    
-
-    try {
         const character = await guildController.editCharacter(interaction.guildID!, targetCharacter, {
             username: characterName,
             content: characterMessage,
@@ -107,30 +95,22 @@ const editCharacter = async (interaction: CommandInteraction | UnknownInteractio
         })
 
         const embed: any = formatASingalCharacterEmbed(character)
-        await interaction.createMessage({
+        return await interaction.createMessage({
             embeds: [embed]
         })
-    } catch(err: any) {
-        console.log(`Error: ${err.message}`)
-        await interaction.createMessage(`Error: ${err.message}`).catch(err => console.log(err.message))
-    }
 
 }
 
 const infoCharacter = async (interaction: CommandInteraction | UnknownInteraction) => {
     const characterName = (interaction.data as any).options[0].options[0].value
 
-        try {
             const character: CharacterObject = await guildController.getCharacter(interaction.guildID!, characterName)
 
             const infoEmbed: any = formatASingalCharacterEmbed(character)
 
-            await interaction.createMessage({
+            return await interaction.createMessage({
                 embeds: [infoEmbed]
             })
-        } catch(err: any) {
-            await interaction.createMessage(`Error: ${err.message}`).catch(err => {})
-        }
 }
 
 const deleteCharacter = async (interaction: CommandInteraction | UnknownInteraction) => {
@@ -146,19 +126,15 @@ const deleteCharacter = async (interaction: CommandInteraction | UnknownInteract
 const setChannel = async (interaction: CommandInteraction | UnknownInteraction) => {
     const channelID = (interaction.data as any).options[0].options[0].value
 
-        try {
             if((channelID).length > 50 || isNaN(channelID)) {
                 throw Error('please enter a valid channel id')
             } 
             await guildController.setWebhookChannel(interaction.guildID!, channelID)
-            interaction.createMessage({ embeds: [{
+            return interaction.createMessage({ embeds: [{
                     title: 'New Welcoming channel',
                     description: `<#${channelID}>`
                 }]
             })
-        } catch(err: any) {
-            await interaction.createMessage(`Error: ${err.message}`).catch(err => {})
-        }
 
 }
 
