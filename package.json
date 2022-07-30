@@ -4,10 +4,10 @@
   "description": "",
   "main": "dist/app.js",
   "scripts": {
-    "dev": "nodemon src/app.ts",
-    "build": "tsc",
-    "start": "node dist/app.js",
-    "tsc": "./node_modules/typescript/bin/tsc"
+    "tsc": "tsc",
+    "postinstall": "node -v && npm run tsc",
+    "start": "node public/server.js",
+    "dev": "nodemon src/server.ts"
   },
   "author": "",
   "license": "ISC",
