@@ -1,2 +1,2 @@
 web: npm start
-worker: node public/server.js
+worker: node dist/app.js
