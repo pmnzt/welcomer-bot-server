@@ -40,7 +40,7 @@ bot.on('guildMemberAdd', async (guild, member) => {
 bot.on('interactionCreate', async (interaction) => {
     if(interaction.type !== 2) return
     try {
-        await interaction.defer()
+        await interaction.defer(64)
     } catch(err: any) {
         console.log(err.message)
     }
@@ -71,7 +71,7 @@ bot.on('interactionCreate', async (interaction) => {
                 break;
         }
     } catch(err: any) {
-        interaction.createMessage({ content: `An Error: ${err.message}`, flags: 64 })
+        interaction.createMessage({ content: `Error: ${err.message}`, flags: 64 })
     }
 })
 
