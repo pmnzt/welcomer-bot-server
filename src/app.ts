@@ -71,7 +71,7 @@ bot.on('interactionCreate', async (interaction) => {
                 break;
         }
     } catch(err: any) {
-        console.log(`Error: ${err.message}`)
+        interaction.createMessage(`Error: ${err.message}`)
     }
 })
 
