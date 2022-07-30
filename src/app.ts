@@ -71,7 +71,7 @@ bot.on('interactionCreate', async (interaction) => {
                 break;
         }
     } catch(err: any) {
-        interaction.createMessage(`Error: ${err.message}`)
+        interaction.createMessage({ content: `Error: ${err.message}`, flags: 64 })
     }
 })
 
