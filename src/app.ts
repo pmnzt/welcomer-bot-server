@@ -46,7 +46,10 @@ bot.on('interactionCreate', async (interaction) => {
     }
     if(!interaction.data) return
 
-    try {
+    try {   
+        if(!interaction.member?.permissions.has("manageWebhooks")) {
+            throw Error('you must have MANAGE_WEBHOOK permission to use this command')
+        }
         switch((interaction.data as any).options[0].name) {
             case "all":
                 interactionCommands.findAllCharacters(interaction)
