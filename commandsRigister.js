@@ -113,9 +113,9 @@ const welcomer = {
 }
 
 const register = async () => {
-    const command1 = await client.createGuildCommand(guildID, charactersCommand, 1)
+    const command1 = await client.createCommand(charactersCommand, 1)
 
-    const command2 = await client.createGuildCommand(guildID, welcomer, 1)
+    const command2 = await client.createCommand(welcomer, 1)
 
     console.log(command1, command2)
 }
