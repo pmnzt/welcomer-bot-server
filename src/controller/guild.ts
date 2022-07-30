@@ -2,8 +2,12 @@ import Guild from '../models/Guild'
 import { CharacterObject } from './Character'
 
 const retriveAllCharacters = async (guildId: string) => {
-    const characters = await Guild.find({ guildId: guildId }, 'characters') ?? []
-    
+    const characters = await Guild.find({ guildId: guildId }, 'characters')
+
+    if(!characters) {
+        return []
+    }
+
     return characters[0].characters
 }
 
