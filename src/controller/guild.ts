@@ -4,7 +4,7 @@ import { CharacterObject } from './Character'
 const retriveAllCharacters = async (guildId: string) => {
     const characters = await Guild.find({ guildId: guildId }, 'characters')
 
-    if(!characters) {
+    if(!characters.length) {
         return []
     }
 
