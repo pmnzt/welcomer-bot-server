@@ -14,6 +14,7 @@ const bot: Client = new (Eris as any)(token, {
 
 bot.on('ready', () => {
     console.log(`${bot.user.username} is ready!`)
+    bot.editStatus({ name: "greeting new members", type: 0 })
 })
 
 
