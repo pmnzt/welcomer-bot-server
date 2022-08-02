@@ -50,17 +50,17 @@ const charactersCommand = {
                 },
                 {
                     "name": "name",
-                    "description": "the character name",
+                    "description": "the new character name",
                     "type": 3,
                 },
                 {
                     "name": "message",
-                    "description": "the welcoming message for this character",
+                    "description": "the new welcoming message for this character",
                     "type": 3,
                 },
                 {
                     "name": "avatar",
-                    "description": "the avatar url",
+                    "description": "the new avatar url",
                     "type": 3, // 3 is type STRING
                 },
             ]
@@ -72,7 +72,7 @@ const charactersCommand = {
             "options": [
                 {
                     "name": "name",
-                    "description": "the character name to be edited",
+                    "description": "the target character name",
                     "type": 3, // 3 is type STRING
                     "required": true
                 }
@@ -85,7 +85,7 @@ const charactersCommand = {
             "options": [
                 {
                     "name": "name",
-                    "description": "the character name to be edited",
+                    "description": "the character name to be deleted",
                     "type": 3, // 3 is type STRING
                     "required": true
                 }
