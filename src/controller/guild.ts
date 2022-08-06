@@ -1,86 +1,110 @@
 import Guild from '../models/Guild'
 import { CharacterObject } from './Character'
 
-const retriveAllCharacters = async (guildId: string) => {
-    const characters = await Guild.find({ guildId: guildId }, 'characters')
+const findGuild = async (guildId: string, options: getGuildOptions = { addGuildIfNotExist: false }) => {
+    if(options.addGuildIfNotExist) {
+       return await Guild.findOne({ guildId: guildId })
+        ?? await addGuild(guildId)
+    } else {
+       return await Guild.findOne({ guildId: guildId })
+    }
+}
 
-    if(!characters.length) {
+const getCharacters = (guild: any) => {
+    if(!guild) return []
+    if(!guild.channelId) {
+        throw Error(`Please set the welcoming channel using \`/welcomer channel\``)
+    }
+    const characters = guild.characters
+    if(!characters) {
         return []
     }
 
-    return characters[0].characters
+    return characters
+}
+
+const retriveAllCharacters = async (guildId: string) => {
+    const guild = await findGuild(guildId, {addGuildIfNotExist: false})
+    
+    const characters = getCharacters(guild)
+    return characters
 }
 
 const getCharacter = async (guildId: string, characterName: string) => {
-    const guild = await Guild.findOne({ guildId: guildId })
+    const guild = await findGuild(guildId)
     if(!guild) throw Error('this character doesnt exist!');
 
-    const characterIndex = guild.characters.findIndex((character: CharacterObject) => {
+    const characters = getCharacters(guild)
+    const characterIndex = characters.findIndex((character: CharacterObject) => {
         return (character.username).toLocaleLowerCase() === (characterName).toLocaleLowerCase()
     })
 
     if(characterIndex === -1) throw Error('this character doesnt exist');
 
-    return guild.characters[characterIndex]
+    return characters[characterIndex]
 }
 
 const deleteCharacter = async (guildId: string, characterName: string) => {
-    const guild = await Guild.findOne({ guildId: guildId })
+    const guild = await findGuild(guildId)
     if(!guild) throw Error('this character doesnt exist!');
 
-    const characterIndex = guild.characters.findIndex((character: CharacterObject) => {
+    const characters = getCharacters(guildId)
+    const characterIndex = characters.findIndex((character: CharacterObject) => {
         return (character.username).toLocaleLowerCase() === (characterName).toLocaleLowerCase()
     })
 
     if(characterIndex === -1) throw Error('this character doesnt exist');
 
-    guild.characters.splice(characterIndex, 1)
+    characters.splice(characterIndex, 1)
+    guild.characters = characters
+    guild.markModified('characters')
+
     await guild.save() 
-    return guild.characters
+    return characters
 }
 
 const editCharacter = async (guildId: string, characterName: string, character: CharacterObject) => {
-    const guild = await Guild.findOne({ guildId: guildId })
+    const guild = await findGuild(guildId)
     if(!guild) throw Error('this character doesnt exist!');
 
-    const characterIndex = guild.characters.findIndex((character: CharacterObject) => {
+    const characters = getCharacters(guild)
+    const characterIndex = characters.findIndex((character: CharacterObject) => {
         return character.username === characterName
     })
 
-    
     if(characterIndex === -1) throw Error('this character doesnt exist');
     
     if(character.username) {
         if((character.username).length > 80) {
             throw Error('characters names could not be longer than 80 char')
         }
-        guild.characters[characterIndex].username = character.username
+        characters[characterIndex].username = character.username
     }
 
     if(character.content) {
         if((character.content).length > 100) {
             throw Error('message content could not be longer than 100 char')
         }
-        guild.characters[characterIndex].content = character.content
+        characters[characterIndex].content = character.content
     }
 
     if(character.avatarURL) {
         if(!validateUrl(character.avatarURL)) {
             throw Error('provide a valid url for avatar')
         }
-        guild.characters[characterIndex].avatarURL = character.avatarURL
+        characters[characterIndex].avatarURL = character.avatarURL
     }
 
+    guild.characters = characters
     guild.markModified('characters')
     await guild.save() 
-    return guild.characters[characterIndex]
+    return characters[characterIndex]
 }
 
 const setWebhookChannel = async (guildId: string, channelId: string) => {
     if(!guildId || !channelId) throw Error('guildId or channelId is missing')
     
-    const guild = await Guild.findOne({ guildId: guildId })
-    ?? await addGuild(guildId)
+    const guild = await findGuild(guildId, { addGuildIfNotExist: true })
 
     guild.channelId = channelId
     await guild.save()
@@ -101,26 +125,13 @@ type getGuildOptions = {
     addGuildIfNotExist: Boolean
 }
 
-const getGuild = async (guildId: string, options: getGuildOptions = { addGuildIfNotExist: true}) => {
-    let guild = {}
-    if(options.addGuildIfNotExist) {
-       guild = await Guild.findOne({ guildId: guildId })
-        ?? await addGuild(guildId)
-    } else {
-       guild = await Guild.findOne({ guildId: guildId })
-    }
-   
-
-    return guild
-}
-
 const pushCharacter = async (guildId: string, character: CharacterObject) => {
-    const guild = await Guild.findOne({ guildId: guildId })
-    ?? await addGuild(guildId)
+    const guild = await findGuild(guildId, { addGuildIfNotExist: true })
 
-    if(guild.characters.length > 9) throw Error('this guild reached out the max amount of characters')
+    const characters = getCharacters(guildId)
+    if(characters.length > 9) throw Error('this guild reached out the max amount of characters')
 
-    const characterIndex = guild.characters.findIndex((item: CharacterObject) => {
+    const characterIndex = characters.findIndex((item: CharacterObject) => {
         return item.username === character.username
     })
 
@@ -146,10 +157,12 @@ const pushCharacter = async (guildId: string, character: CharacterObject) => {
     }
     
 
-    guild.characters.push(character)
-    await guild.save() 
+    characters.push(character)
+    guild.characters = characters
+    guild.markModified('characters')
 
-    return guild.characters
+    await guild.save() 
+    return characters
 }
 
 function validateUrl(value: string) {
@@ -161,7 +174,7 @@ export default {
     getCharacter,
     pushCharacter,
     editCharacter,
-    getGuild,
+    findGuild,
     setWebhookChannel,
     deleteCharacter
 }

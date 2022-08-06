@@ -17,14 +17,13 @@ bot.on('ready', () => {
     bot.editStatus({ name: "greeting new members", type: 0 })
 })
 
-
 bot.on('guildMemberAdd', async (guild, member) => {
-    const db: any = await guildController.getGuild(guild.id, { addGuildIfNotExist: false})
-        
+    guildController.findGuild(guild.id, { addGuildIfNotExist: false }).then((db) => {
         if(!db) return
         if(!db.channelId || !db.characters.length) return
 
         sendWelcomMessage(bot, db.characters, guild.id, db.channelId, member.user.id)
+    }).catch((err) => {})
 })
 
 bot.on('interactionCreate', async (interaction) => {
