@@ -48,7 +48,7 @@ const deleteCharacter = async (guildId: string, characterName: string) => {
     const guild = await findGuild(guildId)
     if(!guild) throw Error('this character doesnt exist!');
 
-    const characters = getCharacters(guildId)
+    const characters = getCharacters(guild)
     const characterIndex = characters.findIndex((character: CharacterObject) => {
         return (character.username).toLocaleLowerCase() === (characterName).toLocaleLowerCase()
     })
@@ -128,7 +128,7 @@ type getGuildOptions = {
 const pushCharacter = async (guildId: string, character: CharacterObject) => {
     const guild = await findGuild(guildId, { addGuildIfNotExist: true })
 
-    const characters = getCharacters(guildId)
+    const characters = getCharacters(guild)
     if(characters.length > 9) throw Error('this guild reached out the max amount of characters')
 
     const characterIndex = characters.findIndex((item: CharacterObject) => {
