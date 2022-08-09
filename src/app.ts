@@ -26,13 +26,12 @@ bot.on('guildMemberAdd', async (guild, member) => {
     }).catch((err) => {})
 })
 
+process.on("unhandledRejection", (error) => {
+    console.log('unhandledRejection')
+})
+
 bot.on('interactionCreate', async (interaction) => {
     if(interaction.type !== 2) return
-    try {
-        await interaction.defer(64)
-    } catch(err: any) {
-        console.log(err.message)
-    }
     if(!interaction.data) return
 
     try {   
