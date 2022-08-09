@@ -108,7 +108,12 @@ const welcomer = {
                 "type": 3, // 3 is type STRING
                 "required": true
             }
-        ]}
+        ]},
+        {
+            "name": "help",
+            "description": "feeling lost ? use this command to help you",
+            "type": 1, 
+        }
     ]
 }
 
