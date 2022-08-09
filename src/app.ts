@@ -34,6 +34,18 @@ bot.on('interactionCreate', async (interaction) => {
     if(interaction.type !== 2) return
     if(!interaction.data) return
 
+    // public commands
+    try {
+        switch((interaction.data as any).options[0].name) {
+            case "help": 
+                    await interactionCommands.helpCommand(interaction)
+                break;
+        }
+    } catch (error: any) {
+        console.log('public command error use')
+    }
+
+    // Admin commands
     try {   
         if(!interaction.member?.permissions.has("manageWebhooks")) {
             throw Error('you must have MANAGE_WEBHOOK permission to use this command')
@@ -61,6 +73,7 @@ bot.on('interactionCreate', async (interaction) => {
     } catch(err: any) {
         interaction.createMessage({ content: `Error: ${err.message}`, flags: 64 })
     }
+
 })
 
 bot.connect()

@@ -138,6 +138,11 @@ const setChannel = async (interaction: CommandInteraction | UnknownInteraction) 
 
 }
 
+const helpCommand = async (interaction: CommandInteraction | UnknownInteraction) => {
+    interaction.createMessage(`https://discord.gg/BqHQSf65b2
+    `)
+} 
+
 function getOption(options: any, name: string) {
     return options.find((option: any) => option.name === name)
 }
@@ -148,5 +153,6 @@ export default {
     editCharacter,
     infoCharacter,
     deleteCharacter,
-    setChannel
+    setChannel,
+    helpCommand
 }
