@@ -139,7 +139,7 @@ const setChannel = async (interaction: CommandInteraction | UnknownInteraction) 
 }
 
 const helpCommand = async (interaction: CommandInteraction | UnknownInteraction) => {
-    interaction.createMessage({ content: `https://discord.gg/BqHQSf65b2
+    interaction.createMessage({ content: `Having **issues or questions about OurBot!!** \n\nWe will do our best to help you <3! \nThe offical support server: \nhttps://discord.gg/BqHQSf65b2
     `, flags: 64 })
 } 
 
