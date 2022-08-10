@@ -26,7 +26,7 @@ const charactersCommand = {
                 },
                 {
                     "name": "message",
-                    "description": "the welcoming message for this character",
+                    "description": "the welcoming message, include $$user if you want to ping the joined user",
                     "type": 3, // 3 is type STRING
                     "required": true
                 },
@@ -55,7 +55,7 @@ const charactersCommand = {
                 },
                 {
                     "name": "message",
-                    "description": "the new welcoming message for this character",
+                    "description": "the welcoming message, include $$user if you want to ping the joined user",
                     "type": 3,
                 },
                 {

@@ -35,9 +35,7 @@ const getCharacter = async (guildId: string, characterName: string) => {
     if(!guild) throw Error('this character doesnt exist!');
 
     const characters = getCharacters(guild)
-    const characterIndex = characters.findIndex((character: CharacterObject) => {
-        return (character.username).toLocaleLowerCase() === (characterName).toLocaleLowerCase()
-    })
+    const characterIndex = findCharacterIndex(characters, characterName)
 
     if(characterIndex === -1) throw Error('this character doesnt exist');
 
@@ -49,9 +47,7 @@ const deleteCharacter = async (guildId: string, characterName: string) => {
     if(!guild) throw Error('this character doesnt exist!');
 
     const characters = getCharacters(guild)
-    const characterIndex = characters.findIndex((character: CharacterObject) => {
-        return (character.username).toLocaleLowerCase() === (characterName).toLocaleLowerCase()
-    })
+    const characterIndex = findCharacterIndex(characters, characterName)
 
     if(characterIndex === -1) throw Error('this character doesnt exist');
 
@@ -68,9 +64,7 @@ const editCharacter = async (guildId: string, characterName: string, character: 
     if(!guild) throw Error('this character doesnt exist!');
 
     const characters = getCharacters(guild)
-    const characterIndex = characters.findIndex((character: CharacterObject) => {
-        return character.username === characterName
-    })
+    const characterIndex = findCharacterIndex(characters, characterName)
 
     if(characterIndex === -1) throw Error('this character doesnt exist');
     
@@ -129,11 +123,9 @@ const pushCharacter = async (guildId: string, character: CharacterObject) => {
     const guild = await findGuild(guildId, { addGuildIfNotExist: true })
 
     const characters = getCharacters(guild)
-    if(characters.length > 9) throw Error('this guild reached out the max amount of characters')
+    if(characters.length > 4) throw Error('this guild reached out the max amount of characters')
 
-    const characterIndex = characters.findIndex((item: CharacterObject) => {
-        return item.username === character.username
-    })
+    const characterIndex = findCharacterIndex(characters, character.username)
 
     const existedCharacter = (characterIndex !== -1)
     if(existedCharacter) throw Error('this Character exists already')
@@ -168,6 +160,24 @@ const pushCharacter = async (guildId: string, character: CharacterObject) => {
 function validateUrl(value: string) {
     return /^(?:(?:(?:https?|ftp):)?\/\/)(?:\S+(?::\S*)?@)?(?:(?!(?:10|127)(?:\.\d{1,3}){3})(?!(?:169\.254|192\.168)(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)(?:\.(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)*(?:\.(?:[a-z\u00a1-\uffff]{2,})))(?::\d{2,5})?(?:[/?#]\S*)?$/i.test(value);
   }
+
+function compareNames(first: string, second: string): boolean {
+    if(!first || !second) return false
+
+    if(first.toLocaleLowerCase() === second.toLocaleLowerCase()) {
+        return true
+    } else {
+        return false
+    }
+}
+
+function findCharacterIndex(characters: any, characterName: string): number {
+    const index = characters.findIndex((item: CharacterObject) => {
+        return compareNames(item.username, characterName)
+    })
+
+    return index
+}
 
 export default {
     retriveAllCharacters,
