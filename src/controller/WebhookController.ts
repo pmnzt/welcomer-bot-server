@@ -62,7 +62,7 @@ const sendWelcomMessage = async (bot: Client, characters: CharacterObject[], gui
 
         const webhook: Webhook = await retriveWelcomerWebhook(guildWebhooks, bot,channelId, 'welcomer')
         
-        bot.executeWebhook(webhook.id, webhook.token!, {
+        await bot.executeWebhook(webhook.id, webhook.token!, {
             ...finalCharacter.getWebhookObject(userId)
         })
     } catch(err: any) {
