@@ -17,25 +17,35 @@ bot.on('ready', () => {
     bot.editStatus({ name: "greeting new members", type: 0 })
 })
 
-
 bot.on('guildMemberAdd', async (guild, member) => {
-    const db: any = await guildController.getGuild(guild.id, { addGuildIfNotExist: false})
-        
+    guildController.findGuild(guild.id, { addGuildIfNotExist: false }).then((db) => {
         if(!db) return
         if(!db.channelId || !db.characters.length) return
 
         sendWelcomMessage(bot, db.characters, guild.id, db.channelId, member.user.id)
+    }).catch((err) => {})
+})
+
+process.on("unhandledRejection", (error) => {
+    console.log('unhandledRejection')
 })
 
 bot.on('interactionCreate', async (interaction) => {
     if(interaction.type !== 2) return
-    try {
-        await interaction.defer(64)
-    } catch(err: any) {
-        console.log(err.message)
-    }
     if(!interaction.data) return
 
+    // public commands
+    try {
+        switch((interaction.data as any).options[0].name) {
+            case "help": 
+                    await interactionCommands.helpCommand(interaction)
+                break;
+        }
+    } catch (error: any) {
+        console.log('public command error use')
+    }
+
+    // Admin commands
     try {   
         if(!interaction.member?.permissions.has("manageWebhooks")) {
             throw Error('you must have MANAGE_WEBHOOK permission to use this command')
@@ -63,6 +73,7 @@ bot.on('interactionCreate', async (interaction) => {
     } catch(err: any) {
         interaction.createMessage({ content: `Error: ${err.message}`, flags: 64 })
     }
+
 })
 
 bot.connect()
