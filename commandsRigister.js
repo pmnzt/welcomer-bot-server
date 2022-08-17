@@ -99,14 +99,17 @@ const welcomer = {
     "description": "configure the welcomer",
     "options": [{
         "name": "channel",
-        "description": "set a channel for sending welcome messages in",
+        "description": "Welcomer messages channel",
         "type": 1, 
         "options": [
             {
-                "name": "id",
-                "description": "the id of the channel",
-                "type": 3, // 3 is type STRING
-                "required": true
+                "name": "channel",
+                "description": "the channel to setup the welcomer in",
+                "type": 7, // 7 is type CHANNEL
+                "required": true,
+                "channel_types": [
+                    0
+                ]
             }
         ]}
     ]
