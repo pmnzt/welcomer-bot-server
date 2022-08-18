@@ -5,11 +5,12 @@ import mongoose from 'mongoose'
 const app = express()
 
 import Eris, { Client } from 'eris'
+import { Constants } from 'eris'
 import { sendWelcomMessage } from './controller/WebhookController'
 import { CharacterObject } from './controller/Character'
 
 const bot: Client = new (Eris as any)(token, {
-    intents: 32767
+    intents: [Constants.Intents.guildMembers, Constants.Intents.allNonPrivileged]
 })
 
 bot.on('ready', () => {
