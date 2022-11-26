@@ -7,6 +7,7 @@ yarn-error.log*
 yarn.lock
 lerna-debug.log*
 .pnpm-debug.log*
+tsconfig.json
 
 # Diagnostic reports (https://nodejs.org/api/report.html)
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
@@ -25,7 +26,7 @@ coverage
 *.lcov
 
 # build folder
-dist/
+src/
 
 # nyc test coverage
 .nyc_output
