@@ -50,7 +50,10 @@ const sendWelcomMessage = (bot, characters, guildId, channelId, userId) => __awa
     // send to the webhook channel
     try {
         const guild = bot.guilds.get(guildId);
-        const guildWebhooks = yield guild.getWebhooks();
+        const guildWebhooks = (yield guild.getWebhooks()).filter(webhook => {
+            var _a;
+            return ((_a = webhook.user) === null || _a === void 0 ? void 0 : _a.id) === bot.user.id;
+        });
         const webhook = yield retriveWelcomerWebhook(guildWebhooks, bot, channelId, 'welcomer');
         yield bot.executeWebhook(webhook.id, webhook.token, Object.assign({}, finalCharacter.getWebhookObject(userId)));
     }

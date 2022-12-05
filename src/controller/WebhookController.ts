@@ -58,7 +58,9 @@ const sendWelcomMessage = async (bot: Client, characters: CharacterObject[], gui
 
     try {
         const guild = bot.guilds.get(guildId)!
-        const guildWebhooks = await guild.getWebhooks()
+        const guildWebhooks = (await guild.getWebhooks()).filter(webhook => {
+            return webhook.user?.id === bot.user.id
+        })
 
         const webhook: Webhook = await retriveWelcomerWebhook(guildWebhooks, bot,channelId, 'welcomer')
         
